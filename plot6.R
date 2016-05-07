@@ -1,6 +1,5 @@
-# Across the United States, 
-# how have emissions from coal combustion-related sources changed 
-# from 1999–2008?
+# How have emissions from 
+# motor vehicle sources changed from 1999–2008 in Baltimore City?
 
 # Read the data
 setwd("~/40 L&G/Coursera/ExDataAnalysis/Project2")
@@ -15,24 +14,25 @@ if (!exists("SCC")) {
 
 # Select the SCC codes for coal combustion related sources
 library(dplyr)
-coalcomb <- SCC %>% 
-        filter(grepl("comb", x = Short.Name, ignore.case = TRUE)) %>%
-        filter(grepl("coal", x = Short.Name, ignore.case = TRUE)) %>%
+vehicles <- SCC %>% 
+        filter(grepl("Mobile", x = SCC.Level.One ,ignore.case = TRUE)) %>%
+        filter(grepl("vehicle", x = Short.Name, ignore.case = TRUE)) %>%
         select(SCC,Short.Name)
 
 #Convert to a vector to use in the filter
-coalcomb <- coalcomb %>% .$SCC
+vehicles <- vehicles %>% .$SCC
 
 # Start the png driver
 png(filename= paste0("plot5.png"), height=295, width=600, bg="white")
 
 # Prepare Data for plot
 df <- NEI %>% select(Emissions, year, Source = type, SCC) %>% 
-        filter(SCC %in% coalcomb) %>%
+        filter(SCC %in% vehicles) %>%
+        filter(fips == "24510") %>%        
         group_by(year, Source) %>%
         summarise(Total = sum(Emissions))
 
-# Compile the plot 
+# Compile the plot >>>Change from point and check filters!!!!!!!!!!!!!
 library(ggplot2)
 qplot(x = year, y = Total,
       data = df,
@@ -41,7 +41,7 @@ qplot(x = year, y = Total,
       col = Source,
       xlab="Year",
       ylab = "Tons of PM2.5",
-      main = "Total Annual Coal Combustion Related Sources \n U.S.A.")
+      main = "Total Annual Vehicles Related Sources \n Baltimore City, Maryland")
 
 # Export the plot 
 dev.off()
