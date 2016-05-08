@@ -25,24 +25,25 @@ vehicles <- SCC %>%
 vehicles <- vehicles %>% .$SCC
 
 # Start the png driver
-png(filename= paste0("plot6.png"), height=295, width=600, bg="white")
+png(filename= paste0("plot7.png"), height=295, width=600, bg="white")
 
 # Prepare Data for plot
-df <- NEI %>% select(Emissions, year, fips, SCC) %>% 
+df <- NEI %>% select(Emissions, year, fips, SCC) %>%
         filter(SCC %in% vehicles) %>%
-        filter(fips == "24510" | fips == "06037") %>%        
-        group_by(year, fips) %>%
+        filter(fips == "24510" | fips == "06037") %>%
+        mutate(fips, City = as.character(ifelse(fips == "24510", "Baltimore City (24510)","Los Angeles (06037)"))) %>%
+        group_by(year, City) %>%
         summarise(Total = sum(Emissions))
 
 library(ggplot2)
 p <- qplot(x = year, y = Total,
       data = df,
       geom = c("point", "line"),
-      group = fips,
-      col = fips,
+      group = City,
+      col = City,
       xlab="Year",
       ylab = "Tons of PM2.5",
-      main = "Total Annual Vehicle Related Emissions \n Baltimore City, Maryland")
+      main = "Total Annual Vehicle Related Emissions \n Baltimore City, Maryland and Los Angeles")
 # Add linear models to observe the change
 p+geom_smooth(method = "lm")
 
