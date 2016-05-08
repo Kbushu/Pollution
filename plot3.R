@@ -2,6 +2,7 @@
 # (point, nonpoint, onroad, nonroad) variable, 
 # which of these four sources have seen decreases in emissions 
 # from 1999–2008 for Baltimore City?
+# and increases
 
 # Read the data
 setwd("~/40 L&G/Coursera/ExDataAnalysis/Project2")
@@ -15,7 +16,7 @@ png(filename= paste0("plot3.png"), height=295, width=600, bg="white")
 # Prepare Data for plot
 library(dplyr)
 df <- NEI %>% select(Emissions, year, Source = type, fips) %>% 
-        filter(fips == "24510", year %in% c(1999, 2008), !Source == "POINT") %>%
+        filter(fips == "24510", year %in% c(1999, 2008)) %>%
         group_by(year, Source) %>%
         summarise(Total = sum(Emissions))
 
@@ -28,7 +29,7 @@ qplot(x = year, y = Total,
         col = Source,
         xlab="Year",
         ylab = "Tons of PM2.5",
-        main = "Decreased Total Annual Emission Sources \n Baltimore City, Maryland")
+        main = "Total Annual Emission Sources \n Baltimore City, Maryland")
 
 # Export the plot 
 dev.off()
