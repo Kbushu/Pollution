@@ -1,5 +1,7 @@
-# How have emissions from 
-# motor vehicle sources changed from 1999–2008 in Baltimore City?
+##Plot 7
+# Compare emissions from motor vehicle sources in Baltimore City
+# with emissions from motor vehicle sources in Los Angeles County, California (fips == "06037"). 
+# Which city has seen greater changes over time in motor vehicle emissions?
 
 # Read the data
 setwd("~/40 L&G/Coursera/ExDataAnalysis/Project2")
@@ -28,17 +30,21 @@ png(filename= paste0("plot6.png"), height=295, width=600, bg="white")
 # Prepare Data for plot
 df <- NEI %>% select(Emissions, year, fips, SCC) %>% 
         filter(SCC %in% vehicles) %>%
-        filter(fips == "24510") %>%        
-        group_by(year) %>%
+        filter(fips == "24510" | fips == "06037") %>%        
+        group_by(year, fips) %>%
         summarise(Total = sum(Emissions))
 
 library(ggplot2)
-qplot(x = year, y = Total,
+p <- qplot(x = year, y = Total,
       data = df,
       geom = c("point", "line"),
+      group = fips,
+      col = fips,
       xlab="Year",
       ylab = "Tons of PM2.5",
       main = "Total Annual Vehicle Related Emissions \n Baltimore City, Maryland")
+# Add linear models to observe the change
+p+geom_smooth(method = "lm")
 
 # Export the plot 
 dev.off()
